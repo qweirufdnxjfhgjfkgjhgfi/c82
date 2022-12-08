@@ -1,0 +1,113 @@
+<html>
+    <head>
+        <title>
+            Project C82
+        </title>
+    <body>
+        
+        <script src="Student_Template_C82.js">
+        </script>
+        
+        <center style="margin-top: 40px;">
+            <h1>
+                Project on console
+            </h1>
+            <p>
+                Visual Studio Code is a free source-code editor made by Microsoft for Windows, Linux and macOS. Features include support for debugging, syntax highlighting, intelligent code completion, snippets, code refactoring, and embedded Git.
+            </p>
+
+            <p>
+A screen buffer is a two-dimensional array of character and color data for output in a console window. A console can have multiple screen buffers. The active screen buffer is the one that is displayed on the screen.
+
+The system creates a screen buffer whenever it creates a new console. To open a handle to a console's active screen buffer, specify the CONOUT$ value in a call to the CreateFile function. A process can use the CreateConsoleScreenBuffer function to create additional screen buffers for its console. A new screen buffer is not active until its handle is specified in a call to the SetConsoleActiveScreenBuffer function. However, screen buffers can be accessed for reading and writing whether they are active or inactive.
+
+Each screen buffer has its own two-dimensional array of character information records. The data for each character is stored in a CHAR_INFO structure that specifies the Unicode or ANSI character and the foreground and background colors in which that character is displayed.
+
+A number of properties associated with a screen buffer can be set independently for each screen buffer. This means that changing the active screen buffer can have a dramatic effect on the appearance of the console window. The properties associated with a screen buffer include:
+
+Screen buffer size, in character rows and columns.
+Text attributes (foreground and background colors for displaying text to be written by the WriteFile or WriteConsole function).
+Window size and location (the rectangular region of the console screen buffer that is displayed in the console window).
+Cursor position, appearance, and visibility.
+Output modes (ENABLE_PROCESSED_OUTPUT and ENABLE_WRAP_AT_EOL_OUTPUT). For more information about console output modes, see High-Level Console Modes.
+When a screen buffer is created, it contains space characters in every position. Its cursor is visible and positioned at the buffer's origin (0,0), and the window is positioned with its upper left corner at the buffer's origin. The size of the console screen buffer, the window size, the text attributes, and the appearance of the cursor are determined by the user or by the system defaults. To retrieve the current values of the various properties associated with the console screen buffer, use the GetConsoleScreenBufferInfo, GetConsoleCursorInfo, and GetConsoleMode functions.
+
+Applications that change any of the console screen buffer properties should either create their own screen buffer or save the state of the inherited screen buffer during startup and restore it at exit. This cooperative behavior is required to ensure that other applications sharing the same console session are not impacted by the changes.
+
+ Tip
+
+It is recommended to use the alternate buffer mode going forward, if possible, instead of creating a second screen buffer for this purpose. Alternate buffer mode offers increased compatibility across remote devices and with other platforms. Please see our discussion on classic console APIs versus virtual terminal for more information.
+
+Cursor Appearance and Position
+A screen buffer's cursor can be visible or hidden. When it is visible, its appearance can vary, ranging from completely filling a character cell to appearing as a horizontal line at the bottom of the cell. To retrieve information about the appearance and visibility of the cursor, use the GetConsoleCursorInfo function. This function reports whether the cursor is visible and describes the appearance of the cursor as the percentage of a character cell that it fills. To set the appearance and visibility of the cursor, use the SetConsoleCursorInfo function.
+
+Characters written by the high-level console I/O functions are written at the current cursor location, advancing the cursor to the next location. To determine the current cursor position in the coordinate system of a screen buffer, use GetConsoleScreenBufferInfo. You can use SetConsoleCursorPosition to set the cursor position and, thereby, control the placement of text that is written or echoed by the high-level I/O functions. If you move the cursor, text at the new cursor location is overwritten.
+
+ Note
+
+Using the low-level functions to find the cursor position is discouraged. It is recommended to use virtual terminal sequences to query this position if necessary for advanced layouts. More information about preferring virtual terminal sequences can be found in the classic functions versus virtual terminal document.
+
+The position, appearance, and visibility of the cursor are set independently for each screen buffer.
+
+Character Attributes
+Character attributes can be divided into two classes: color and DBCS. The following attributes are defined in the WinCon.h header file.
+
+Attribute	Meaning
+FOREGROUND_BLUE	Text color contains blue.
+FOREGROUND_GREEN	Text color contains green.
+FOREGROUND_RED	Text color contains red.
+FOREGROUND_INTENSITY	Text color is intensified.
+BACKGROUND_BLUE	Background color contains blue.
+BACKGROUND_GREEN	Background color contains green.
+BACKGROUND_RED	Background color contains red.
+BACKGROUND_INTENSITY	Background color is intensified.
+COMMON_LVB_LEADING_BYTE	Leading byte.
+COMMON_LVB_TRAILING_BYTE	Trailing byte.
+COMMON_LVB_GRID_HORIZONTAL	Top horizontal.
+COMMON_LVB_GRID_LVERTICAL	Left vertical.
+COMMON_LVB_GRID_RVERTICAL	Right vertical.
+COMMON_LVB_REVERSE_VIDEO	Reverse foreground and background attributes.
+COMMON_LVB_UNDERSCORE	Underscore.
+The foreground attributes specify the text color. The background attributes specify the color used to fill the cell's background. The other attributes are used with DBCS.
+
+An application can combine the foreground and background constants to achieve different colors. For example, the following combination results in bright cyan text on a blue background.
+
+FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY | BACKGROUND_BLUE
+
+If no background constant is specified, the background is black, and if no foreground constant is specified, the text is black. For example, the following combination produces black text on a white background. Red, green, and blue are specified for the background which combines to a white background. No flag colors are specified for the foreground so it is black.
+
+BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED
+
+Each screen buffer character cell stores the color attributes for the colors used in drawing the foreground (text) and background of that cell. An application can set the color data for each character cell individually, storing the data in the Attributes member of the CHAR_INFO structure for each cell. The current text attributes of each screen buffer are used for characters subsequently written or echoed by the high-level functions.
+
+An application can use GetConsoleScreenBufferInfo to determine the current text attributes of a screen buffer and the SetConsoleTextAttribute function to set the character attributes. Changing a screen buffer's attributes does not affect the display of characters previously written. These text attributes do not affect characters written by the low-level console I/O functions (such as the WriteConsoleOutput or WriteConsoleOutputCharacter function), which either explicitly specify the attributes for each cell that is written or leave the attributes unchanged.
+
+ Note
+
+Using the low-level functions to manipulate default and specific text attributes is discouraged. It is recommended to use virtual terminal sequences to set text attributes. More information about preferring virtual terminal sequences can be found in the classic functions versus virtual terminal document.
+
+Font Attributes
+The GetCurrentConsoleFont function retrieves information about the current console font. The information stored in the CONSOLE_FONT_INFO structure includes the width and height of each character in the font.
+
+The GetConsoleFontSize function retrieves the size of the font used by the specified console screen buffer.
+
+ Note
+
+Using functions to find and manipulate font information is discouraged. It is recommended to operate command-line applications in a font neutral manner to ensure cross-platform compatibility as well as compatibility with host environments that allow the user to customize the font. More information user preferences and host environments including terminals, please see the ecosystem roadmap.
+
+Recommended content
+SetConsoleTextAttribute function - Windows Console
+Sets the attributes of characters written to the console screen buffer by the WriteFile or WriteConsole function, or echoed by the ReadFile or ReadConsole function.
+COORD structure - Windows Console
+Defines the coordinates of a character cell in a console screen buffer.
+SetCurrentConsoleFontEx function - Windows Console
+See reference information about the SetCurrentConsoleFontEx function, which sets extended information about the current console font.
+Using the High-Level Input and Output Functions - Windows Console
+The following example uses the high-level console I/O functions for console I/O. For more information about the high-level console I/O functions, see High-Level Console I/O.
+            </p>
+               
+    
+        </center>
+
+    </body>
+</html>
